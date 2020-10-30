@@ -15,7 +15,17 @@ const store = new Vuex.Store({
 			endTime: null,
 			solvedTech: null,
 			solvedNotTech: null,
+			skippedQues: [
+				{
+					domain: null,
+					number: null
+				}
+			]
 		},
+		techCurrent: 0,
+		nonTechCurrent: 0,
+		lang: 0,
+		theme: 0
 	},
 	mutations: {
 		EDIT_USER: (state, payload) => {
@@ -41,6 +51,26 @@ const store = new Vuex.Store({
 				state.user.solvedTech = payload.solvedTech;
 			}
 		},
+		ADD_SKIPPED_QUES: (state, payload) => {
+			if(payload.doamin) {
+				state.user.domain = payload.doamin;
+			}
+			if(payload.number) {
+				state.user.number = payload.number;
+			}
+		},
+		TECH_INCREMENT: (state) => {
+			state.techCurrent++;
+		},
+		NON_TECH_INCREMENT: (state) => {
+			state.nonTechCurrent++;
+		},
+		UPDATE_LANG: (state, payload) => {
+			state.lang = payload;
+		},
+		UPDATE_THEME: (state, payload) => {
+			state.theme = payload;
+		}
 	},
 	actions: {
 		FETCH_USER: (context, payload) => {
