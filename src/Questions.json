@@ -1,0 +1,34 @@
+{
+    "Tech": [
+        {
+            "QuestionNo": 1,
+            "Question": "",
+            "type": "mcq | code | output | bug",
+            "options": "",
+            "answer": ""
+        },
+        {
+            "QuestionNo": 2,
+            "Question": "",
+            "type": "mcq | code | output | bug",
+            "options": "",
+            "answer": ""
+        }
+    ],
+    "NonTech": [
+        {
+            "QuestionNo": 1,
+            "Question": "",
+            "type": "mcq | gibb | Scramble",
+            "options": "",
+            "answer": ""
+        },
+        {
+            "QuestionNo": 2,
+            "Question": "",
+            "type": "mcq | gibb | Scramble",
+            "options": "",
+            "answer": ""
+        }
+    ]
+}
