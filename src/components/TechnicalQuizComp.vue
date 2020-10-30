@@ -6,7 +6,7 @@
         <div v-if="questions[quesNumber].type === 'code'">
           <codeEdit />
         </div>
-      <Buttons />
+      <Buttons @previous="prev" @next="next" @skip="skip"/>
   </div>
 </template>
 
@@ -26,8 +26,20 @@ export default {
 	},
 	computed: {
 		quesNumber() {
-			return this.$store.state.nonTechCurrent;
+			return this.$store.state.techCurrent;
 		}
+	},
+	methods: {
+		next() {
+			this.$store.commit("TECH_INCREMENT");
+		},
+		prev() {
+			this.$store.commit("TECH_DECREMENT");
+		},
+		skip() {
+			this.$store.commit("ADD_SKIPPED_QUES", this.questions[this.quesNumber]);
+			this.$store.commit("TECH_INCREMENT");
+		},
 	}
 };
 </script>

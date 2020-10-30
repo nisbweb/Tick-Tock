@@ -39,6 +39,12 @@
           <p class="title">25</p>
         </div>
       </div>
+      <div class="level-item has-text-centered">
+        <div>
+          <p class="heading">Skipped</p>
+          <p class="title">{{ skipCount }}</p>
+        </div>
+      </div>
     </nav>
 
     <!-- tabs/sections -->
@@ -77,6 +83,11 @@ export default {
 		return {
 			activeTab: 0
 		};
+	},
+	computed: {
+		skipCount() {
+			return this.$store.state.user.skippedQues.length;
+		}
 	},
 	components: {
 		TechnicalQuiz,

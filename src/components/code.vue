@@ -1,10 +1,9 @@
 <template>
     <div class="columns">
-        <div style="margin: 20px" class="column is-8">
+        <div class="column is-8">
           <brace
             v-model="code"
             style="height: 500px" 
-            :fontsize="'25px'"
             :theme="themes[theme]"
             :mode="langs[lang]"
             :codefolding="'markbegin'"
@@ -61,7 +60,7 @@ export default {
 		return {
 			code: "",
 			langs: ["c_cpp", "python", "java", "javascript"],
-			themes: ["twilight", "dracula", "monokai", "light"],
+			themes: ["twilight", "monokai", "solarized_light"],
 			tempL: null,
 			tempT: null,
 			output: ""
@@ -87,7 +86,7 @@ export default {
 		},
 		ctheme() {
 			this.$store.commit("UPDATE_THEME", this.tempT);
-		}
+		},
 	}
 };
 </script>
