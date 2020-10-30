@@ -52,18 +52,19 @@ const store = new Vuex.Store({
 			}
 		},
 		ADD_SKIPPED_QUES: (state, payload) => {
-			if(payload.doamin) {
-				state.user.domain = payload.doamin;
-			}
-			if(payload.number) {
-				state.user.number = payload.number;
-			}
+			state.user.skippedQues.push(payload);
 		},
 		TECH_INCREMENT: (state) => {
 			state.techCurrent++;
 		},
 		NON_TECH_INCREMENT: (state) => {
 			state.nonTechCurrent++;
+		},
+		TECH_DECREMENT: (state) => {
+			state.techCurrent--;
+		},
+		NON_TECH_DECREMENT: (state) => {
+			state.nonTechCurrent--;
 		},
 		UPDATE_LANG: (state, payload) => {
 			state.lang = payload;
