@@ -4,6 +4,7 @@ import router from "./router";
 import Buefy from "buefy";
 import "buefy/dist/buefy.css";
 import Vuex from "vuex";
+import store from "./store/store";
 
 Vue.use(Vuex);
 
@@ -12,6 +13,7 @@ Vue.use(Buefy);
 Vue.config.productionTip = false;
 
 new Vue({
-  router,
-  render: (h) => h(App),
+	store: store,
+	router,
+	render: (h) => h(App),
 }).$mount("#app");
