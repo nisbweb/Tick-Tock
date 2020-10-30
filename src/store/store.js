@@ -19,15 +19,40 @@ const store = new Vuex.Store({
 	},
 	mutations: {
 		EDIT_USER: (state, payload) => {
-			console.log(state, payload);
-			firebaseApp.db.collection("test").add({
-				email: "iresh.sharma8@gmail.com",
+			if(payload.displayName) {
+				state.user.displayName = payload.displayName;
+			}
+			if(payload.email) {
+				state.user.email = payload.email;
+			}
+			if(payload.id) {
+				state.user.id = payload.id;
+			}
+			if(payload.startTime) {
+				state.user.startTime = payload.startTime;
+			}
+			if(payload.endTime) {
+				state.user.endTime = payload.endTime;
+			}
+			if(payload.solvedNotTech) {
+				state.user.solvedNotTech = payload.solvedNotTech;
+			}
+			if(payload.solvedTech) {
+				state.user.solvedTech = payload.solvedTech;
+			}
+		},
+	},
+	actions: {
+		FETCH_USER: (context, payload) => {
+			firebaseApp.db.collection("users").doc(payload.id).get().then(val => {
+				var temp = {
+					id: val.id,
+					data: val.data()
+				};
+				context.commit("EDIT_USER", temp);
 			});
 		},
 	},
-	// actions: {
-	// 	FETCH_USER: (state, payload) => {},
-	// },
 });
 
 export default store;

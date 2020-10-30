@@ -1,9 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import firebaseApp from "../firebaseConfig";
-import Login from "../views/login.vue"
-import Quiz from "../views/Quiz.vue"
-import liveLeaderBoard from "../views/liveLeaderBoard.vue"
+import Login from "../views/login.vue";
+import Quiz from "../views/Quiz.vue";
+import liveLeaderBoard from "../views/liveLeaderBoard.vue";
 
 Vue.use(VueRouter);
 
@@ -45,7 +45,7 @@ router.beforeEach((to, from, next) => {
 	if (!requiresAuth) {
 		next();
 	} else {
-		if (firebaseApp.auth.currentUser) {
+		if (firebaseApp.auth.currentUser || this.$store.state.user.id != null) {
 			next();
 		} else {
 			router.replace({
