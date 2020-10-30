@@ -1,9 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import firebaseApp from "../firebaseConfig";
-import Login from "../views/login.vue"
-import Quiz from "../views/Quiz.vue"
-import liveLeaderBoard from "../views/liveLeaderBoard.vue"
 
 Vue.use(VueRouter);
 
@@ -11,7 +8,7 @@ const routes = [
 	{
 		path: "/",
 		name: "Login",
-		component: Login,
+		component: () => import("../views/login.vue"),
 		meta: {
 			requiresAuth: false,
 		},
@@ -19,15 +16,16 @@ const routes = [
 	{
 		path: "/quiz",
 		name: "Quiz",
-		component: Quiz,
-		meta: {
-			requiresAuth: true,
-		},
+		component: () => import("../views/Quiz.vue")
+		// Auth temporarily disabled for development purpose. please uncomment in production
+		// meta: {
+		// 	requiresAuth: true,
+		// },
 	},
 	{
 		path: "/final",
 		name: "Final",
-		component: liveLeaderBoard,
+		component: () => import("../views/liveLeaderBoard.vue"),
 		meta: {
 			requiresAuth: true,
 		},
