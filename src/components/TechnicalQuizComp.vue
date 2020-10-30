@@ -31,13 +31,15 @@ export default {
 	},
 	methods: {
 		next() {
-			this.$store.commit("TECH_INCREMENT");
+			this.$store.dispatch("TECH_INCREMENT_ACTION", this.questions[this.quesNumber]);
 		},
 		prev() {
 			this.$store.commit("TECH_DECREMENT");
 		},
 		skip() {
-			this.$store.commit("ADD_SKIPPED_QUES", this.questions[this.quesNumber]);
+			var temp = Object.assign({}, this.questions[this.quesNumber]);
+			temp.domain = "tech";
+			this.$store.commit("ADD_SKIPPED_QUES", temp);
 			this.$store.commit("TECH_INCREMENT");
 		},
 	}

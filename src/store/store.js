@@ -15,12 +15,7 @@ const store = new Vuex.Store({
 			endTime: null,
 			solvedTech: null,
 			solvedNotTech: null,
-			skippedQues: [
-				{
-					domain: null,
-					number: null
-				}
-			]
+			skippedQues: []
 		},
 		techCurrent: 0,
 		nonTechCurrent: 0,
@@ -83,6 +78,14 @@ const store = new Vuex.Store({
 				context.commit("EDIT_USER", temp);
 			});
 		},
+		TECH_INCREMENT_ACTION: (context, payload) => {
+			context.state.user.skippedQues = context.state.user.skippedQues.filter((el) => el.QuestionNo != payload.QuestionNo && el.domain == "tech");
+			context.commit("TECH_INCREMENT");
+		},
+		NON_TECH_INCREMENT_ACTION: (context, payload) => {
+			context.state.user.skippedQues = context.state.user.skippedQues.filter((el) => el.QuestionNo != payload.QuestionNo && el.domain == "non");
+			context.commit("NON_TECH_INCREMENT");
+		}
 	},
 });
 

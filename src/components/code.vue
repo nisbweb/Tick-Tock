@@ -3,7 +3,7 @@
         <div class="column is-8">
           <brace
             v-model="code"
-            style="height: 500px" 
+            style="height: 500px"
             :theme="themes[theme]"
             :mode="langs[lang]"
             :codefolding="'markbegin'"
@@ -60,7 +60,7 @@ export default {
 		return {
 			code: "",
 			langs: ["c_cpp", "python", "java", "javascript"],
-			themes: ["twilight", "monokai", "solarized_light"],
+			themes: ["monokai","twilight" , "solarized_light"],
 			tempL: null,
 			tempT: null,
 			output: ""
