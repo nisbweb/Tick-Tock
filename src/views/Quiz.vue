@@ -68,6 +68,7 @@
       <div class="content has-text-centered">
         <p>
           Built with 🧠 by <a href="https://www.nisb.in">Team NISB</a>
+          
         </p>
       </div>
     </footer>
