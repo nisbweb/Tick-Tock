@@ -1,16 +1,17 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
-import Quiz from "../views/Quiz.vue";
 import firebaseApp from "../firebaseConfig";
+import Login from "../views/login.vue"
+import Quiz from "../views/Quiz.vue"
+import liveLeaderBoard from "../views/liveLeaderBoard.vue"
 
 Vue.use(VueRouter);
 
 const routes = [
 	{
 		path: "/",
-		name: "Home",
-		component: Home,
+		name: "Login",
+		component: Login,
 		meta: {
 			requiresAuth: false,
 		},
@@ -19,6 +20,14 @@ const routes = [
 		path: "/quiz",
 		name: "Quiz",
 		component: Quiz,
+		meta: {
+			requiresAuth: true,
+		},
+	},
+	{
+		path: "/final",
+		name: "Final",
+		component: liveLeaderBoard,
 		meta: {
 			requiresAuth: true,
 		},
