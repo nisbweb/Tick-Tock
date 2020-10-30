@@ -1,5 +1,9 @@
 # dream-code
 
+### Setup enviroment variables (**IMORTANT**)
+```
+cp .env.sample .env
+```
 ## Project setup
 ```
 npm install

@@ -1,21 +1,21 @@
-import firebase from "firebase";
-
-import "firebase/firestore";
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+import 'firebase/auth'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBTKEiPUqXTocG6AaWwNSdvTg7myfV81QY",
-  authDomain: "dream-code-e5b06.firebaseapp.com",
-  databaseURL: "https://dream-code-e5b06.firebaseio.com",
-  projectId: "dream-code-e5b06",
-  storageBucket: "dream-code-e5b06.appspot.com",
-  messagingSenderId: "1002598115761",
-  appId: "1:1002598115761:web:1b286ea2179d7683913590",
-};
+	apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
+	authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
+	databaseURL: process.env.VUE_APP_FIREBASE_DATABASE_URL,
+	projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
+	storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
+	messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
+	appId: process.env.VUE_APP_FIREBASE_APP_ID
+}
 
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig)
 
-const db = firebase.firestore();
+const db = firebase.firestore()
 
-const auth = firebase.auth();
+const auth = firebase.auth()
 
-export default { db, auth };
+export default { db, auth }
