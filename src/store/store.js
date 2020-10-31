@@ -69,13 +69,12 @@ const store = new Vuex.Store({
 		}
 	},
 	actions: {
-		FETCH_USER: (context, payload) => {
-			firebaseApp.db.collection("users").doc(payload.id).get().then(val => {
-				var temp = {
-					id: val.id,
-					data: val.data()
-				};
-				context.commit("EDIT_USER", temp);
+		FETCH_USER: ({commit}, payload) => {
+			firebaseApp.db.collection("user").doc(payload).get().then(val => {
+				// console.log(val.id, val.data());
+				commit("EDIT_USER", val.data());
+			}).catch(err => {
+				console.error(err);
 			});
 		},
 		TECH_INCREMENT_ACTION: (context, payload) => {
@@ -87,6 +86,14 @@ const store = new Vuex.Store({
 			context.commit("NON_TECH_INCREMENT");
 		}
 	},
+	getters:{
+		GET_USER: state => state.user,
+		GET_LANG: state => state.lang,
+		GET_THEME: state => state.theme,
+		GET_TECH: state => state.techCurrent,
+		GET_NON: state => state.nonTechCurrent,
+		GET_START_TIME: state => state.user.startTime
+	}
 });
 
 export default store;

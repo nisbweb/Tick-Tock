@@ -18,7 +18,7 @@
       <div class="level-item has-text-centered">
         <div>
           <p class="heading">Time</p>
-          <p class="title">30:20</p>
+          <p class="title">30:{{ Minutes }}</p>
         </div>
       </div>
       <div class="level-item has-text-centered">
@@ -79,16 +79,44 @@
 <script>
 import TechnicalQuiz from "../components/TechnicalQuizComp";
 import NonTechnicalQuiz from "../components/NonTechnicalQuizComp";
+import {mapGetters} from "vuex";
+// import moment from "moment";
 export default {
 	data() {
 		return {
-			activeTab: 0
+			activeTab: 0,
+			Minutes: 0,
+			Seconds: 0,
+			Hours: 0,
+			Days: 0
 		};
 	},
+	watch:{
+		startTime(newVal){
+			if(newVal.seconds){
+				this.setTime();
+				
+			}
+		}
+	},
+	mounted(){
+	},
+	methods:{
+		setTime(){
+			// console.log(moment().format("s") , moment.unix(this.startTime.seconds).format("s"));
+			// console.log(moment().format("m") , moment.unix(this.startTime.seconds).format("m"));
+			// console.log(moment().format("h") , moment.unix(this.startTime.seconds).format("h"));
+			// console.log(moment().from(moment.unix(this.startTime.seconds)));
+			// console.log(`${this.Minutes}:${this.Seconds}`);
+		}
+	},
 	computed: {
+		...mapGetters({
+			startTime: "GET_START_TIME"
+		}),
 		skipCount() {
 			return this.$store.state.user.skippedQues.length;
-		}
+		},
 	},
 	components: {
 		TechnicalQuiz,

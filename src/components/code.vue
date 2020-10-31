@@ -39,7 +39,7 @@
             <h1 class="is-size-3">
               Output
             </h1>
-            <div style="height: 200px; background-color: black; margin-right: 20px">
+            <div style="height: 200px; background-color: black;">
               {{  }}
             </div>
           </div>
@@ -49,6 +49,7 @@
 
 <script>
 import Brace from "vue-bulma-brace";
+import {mapGetters} from "vuex";
 export default {
 	props: {
 		init: {
@@ -70,12 +71,10 @@ export default {
 		Brace
 	},
 	computed: {
-		lang() {
-			return this.$store.state.lang;
-		},
-		theme() {
-			return this.$store.state.theme;
-		}
+		...mapGetters({
+			lang: "GET_LANG",
+			theme: "GET_THEME"
+		})
 	},
 	beforeMount() {
 		if(this.init === "") this.code = this.init;
