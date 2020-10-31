@@ -91,7 +91,8 @@ const store = new Vuex.Store({
 		GET_LANG: state => state.lang,
 		GET_THEME: state => state.theme,
 		GET_TECH: state => state.techCurrent,
-		GET_NON: state => state.nonTechCurrent,
+		GET_NONTECH: state => state.nonTechCurrent,
+		GET_SKIPS: state => state.user.skippedQues.length,
 		GET_START_TIME: state => state.user.startTime
 	}
 });
