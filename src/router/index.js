@@ -56,9 +56,11 @@ router.beforeEach( async (to, from, next) => {
 	const user = await firebase.getCurrentUser();
 	if (requiresAuth && !user) {
 		next("");
-	} else {
+	} else if(user) {
 		store.dispatch("FETCH_USER", user.uid);
 		next();
+	}else {
+		next()
 	}
 });
 
