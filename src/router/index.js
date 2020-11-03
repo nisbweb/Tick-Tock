@@ -60,7 +60,7 @@ router.beforeEach( async (to, from, next) => {
 		store.dispatch("FETCH_USER", user.uid);
 		next();
 	}else {
-		next()
+		next();
 	}
 });
 
