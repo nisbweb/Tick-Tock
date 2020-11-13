@@ -1,20 +1,32 @@
 [
     {
         "QuestionNo": 0,
+        "Question": "Whos the best?",
+        "type": "mcq",
+        "options": [
+            "Shreesh",
+            "iresh",
+            "veer",
+            "pranav"
+        ],
+        "answer": "pranav"
+    },
+    {
+        "QuestionNo": 1,
         "Question": "question",
         "type": "code",
         "options": "",
         "answer": ""
     },
     {
-        "QuestionNo": 1,
+        "QuestionNo": 2,
         "Question": "hi",
         "type": "output",
         "options": "",
         "answer": ""
     },
     {
-        "QuestionNo": 1,
+        "QuestionNo": 3,
         "Question": "Bye",
         "type": "bug",
         "options": "",
