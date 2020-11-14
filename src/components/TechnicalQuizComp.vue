@@ -3,11 +3,27 @@
     <h1 class="is-size-2">
       {{ questions[quesNumber].Question }}
     </h1>
-	<div v-if="questions[quesNumber].type === 'mcq'">
-		<MCQ :selectedOption="msqSelectedOption" @select="select($event)" :options="questions[quesNumber].options" />
-	</div>
-    <div v-if="questions[quesNumber].type === 'code'">
-      <codeEdit />
+    <div class="container">
+
+      <div v-if="questions[quesNumber].type === 'mcq'">
+        <MCQ
+          :selectedOption="mcqSelectedOption"
+          @select="select($event)"
+          :options="questions[quesNumber].options"
+        />
+      </div>
+      <div
+        class=""
+        v-else-if="questions[quesNumber].type === 'gibb'"
+      >
+        <Gibb
+          :answerVal="answer"
+          @input="gibb = $event"
+        />
+      </div>
+      <div v-else-if="questions[quesNumber].type === 'code'">
+        <codeEdit />
+      </div>
     </div>
     <Buttons
       @previous="prev"
@@ -21,33 +37,36 @@
 import Buttons from "./BottomButtons";
 import questions from "../techQuestions.json";
 import codeEdit from "./code.vue";
+import Gibb from "./gibb";
 import MCQ from "./mcq";
 import { mapGetters } from "vuex";
 export default {
 	data: function () {
 		return {
 			questions,
-			msqSelectedOption: null
+			mcqSelectedOption: null,
+			gibb: ""
 		};
 	},
 	components: {
 		Buttons,
 		MCQ,
+		Gibb,
 		codeEdit
 	},
 	computed: {
 		...mapGetters({
 			quesNumber: "GET_TECH"
 		})
-		// quesNumber() {
-		// 	return this.$store.state.techCurrent;
-		// }
 	},
 	methods: {
 		submit() {
-			if(this.questions[this.quesNumber].type === "mcq"){
+			if (this.questions[this.quesNumber].type === "mcq") {
 				// code to submit mcq answer
-				this.msqSelectedOption = null;
+				this.mcqSelectedOption = null;
+			} else if (this.questions[this.quesNumber].type == "gibb") {
+				// code to submit gibberish
+				this.gibb = "";
 			}
 			// code to handle submissionof code type question's answer
 			this.$store.dispatch("TECH_INCREMENT_ACTION", this.questions[this.quesNumber]);
@@ -61,8 +80,8 @@ export default {
 			this.$store.commit("ADD_SKIPPED_QUES", temp);
 			this.$store.commit("TECH_INCREMENT");
 		},
-		select(option){
-			this.msqSelectedOption = this.msqSelectedOption === option ? null : option;
+		select(option) {
+			this.mcqSelectedOption = this.mcqSelectedOption === option ? null : option;
 		}
 	}
 };
