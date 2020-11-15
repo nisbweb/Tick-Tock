@@ -130,8 +130,8 @@ export default {
 	computed: {
 		...mapGetters({
 			startTime: "GET_START_TIME",
-			techCount: "GET_TECH",
-			nonTechCount: "GET_NONTECH",
+			techCount: "GET_TECH_AT",
+			nonTechCount: "GET_NONTECH_AT",
 			// skipCount returns length of skipQues and not the actual list itself
 			skipCount: "GET_SKIPS"
 		})

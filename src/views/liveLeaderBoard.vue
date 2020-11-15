@@ -43,6 +43,7 @@
 
 <script>
 import firebaseApp from "../firebaseConfig";
+import { mapGetters } from "vuex";
 export default {
 	data() {
 		return {
@@ -59,8 +60,12 @@ export default {
 			point: 1,
 			count: 1,
 			what: "solvedTech",
-			total: 5
 		};
+	},
+	computed: {
+		...mapGetters({
+			total: "GET_TOTAL_USER"
+		})
 	},
 	beforeMount() {
 		firebaseApp.db.collection("user").orderBy(this.what, "desc").limit(this.perPage).onSnapshot(data => {

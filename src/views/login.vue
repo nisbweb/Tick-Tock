@@ -128,7 +128,10 @@ export default {
 	watch: {
 		// eslint-disable-next-line no-unused-vars
 		admin(newValue, oldValue) {
-			if (newValue && this.user.id) this.$router.push("/quiz");
+			if (newValue && this.user.id) {
+				this.$router.push("/quiz");
+				this.startTimer();
+			}
 			else this.promp = true;
 		}
 	},
@@ -136,7 +139,8 @@ export default {
 		// this.$store.dispatch("FETCH_USER");
 		firebaseApp.db.collection("admin").doc("XcEoKorsJfpu2TrWbuoA").onSnapshot(value => {
 			this.admin = value.data().start;
-			console.log(this.admin);
+			console.log(value.data());
+			this.$store.commit("TOTAL_USER", { total: value.data().totalUser });
 		});
 	},
 	methods: {

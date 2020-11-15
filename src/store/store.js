@@ -22,7 +22,8 @@ const store = new Vuex.Store({
 		lang: 0,
 		theme: 0,
 		nonTechAttempt: 0,
-		techAttempt: 0
+		techAttempt: 0,
+		totalUser: 0
 	},
 	mutations: {
 		EDIT_USER: (state, payload) => {
@@ -74,6 +75,9 @@ const store = new Vuex.Store({
 		},
 		UPDATE_THEME: (state, payload) => {
 			state.theme = payload;
+		},
+		TOTAL_USER: (state, payload) => {
+			state.totalUser = payload.total;
 		}
 	},
 	actions: {
@@ -98,10 +102,27 @@ const store = new Vuex.Store({
 		GET_USER: state => state.user,
 		GET_LANG: state => state.lang,
 		GET_THEME: state => state.theme,
-		GET_TECH: state => state.techAttempt,
-		GET_NONTECH: state => state.nonTechAttempt,
+		GET_TECH: state => state.techCurrent,
+		GET_NONTECH: state => state.nonTechCurrent,
+		GET_TECH_AT: state => state.techAttempt,
+		GET_NONTECH_AT: state => state.nonTechAttempt,
 		GET_SKIPS: state => state.user.skippedQues.length,
-		GET_START_TIME: state => state.user.startTime
+		GET_START_TIME: state => state.user.startTime,
+		GET_SKIPPED_NUMBERS_TECH: state => {
+			var temp = [];
+			state.user.skippedQues.forEach(el => {
+				if(el.domain === "tech") temp.push(el.id);
+			});
+			return temp;
+		},
+		GET_SKIPPED_NUMBERS_NON_TECH: state => {
+			var temp = [];
+			state.user.skippedQues.forEach(el => {
+				if(el.domain === "non") temp.push(el.id);
+			});
+			return temp;
+		},
+		GET_TOTAL_USER: state => state.totalUser,
 	}
 });
 
