@@ -32,6 +32,7 @@ export default {
 	methods: {
 		next() {
 			this.$store.dispatch("TECH_INCREMENT_ACTION", this.questions[this.quesNumber]);
+			this.$store.commit("TECH_ATTEMPT");
 		},
 		prev() {
 			this.$store.commit("TECH_DECREMENT");

@@ -20,7 +20,9 @@ const store = new Vuex.Store({
 		techCurrent: 0,
 		nonTechCurrent: 0,
 		lang: 0,
-		theme: 0
+		theme: 0,
+		nonTechAttempt: 0,
+		techAttempt: 0
 	},
 	mutations: {
 		EDIT_USER: (state, payload) => {
@@ -61,6 +63,12 @@ const store = new Vuex.Store({
 		NON_TECH_DECREMENT: (state) => {
 			state.nonTechCurrent--;
 		},
+		TECH_ATTEMPT: (state) => {
+			state.techAttempt++;
+		},
+		NON_TECH_ATTEMPT: (state) => {
+			state.nonTechAttempt++;
+		},
 		UPDATE_LANG: (state, payload) => {
 			state.lang = payload;
 		},
@@ -90,8 +98,8 @@ const store = new Vuex.Store({
 		GET_USER: state => state.user,
 		GET_LANG: state => state.lang,
 		GET_THEME: state => state.theme,
-		GET_TECH: state => state.techCurrent,
-		GET_NONTECH: state => state.nonTechCurrent,
+		GET_TECH: state => state.techAttempt,
+		GET_NONTECH: state => state.nonTechAttempt,
 		GET_SKIPS: state => state.user.skippedQues.length,
 		GET_START_TIME: state => state.user.startTime
 	}
