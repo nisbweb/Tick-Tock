@@ -1,20 +1,37 @@
 [
     {
-        "QuestionNo": 0,
+        "QuestionNo":0,
+        "Question": "Solve the gibberish : kiburnutus",
+        "type": "gibb",
+        "answer": "kubernetes"
+    },
+    {
+        "QuestionNo": 1,
+        "Question": "Whos the best?",
+        "type": "mcq",
+        "options": [
+            "Shreesh",
+            "iresh",
+            "veer",
+            "pranav"
+        ]
+    },
+    {
+        "QuestionNo": 2,
         "Question": "question",
         "type": "code",
         "options": "",
         "answer": ""
     },
     {
-        "QuestionNo": 1,
+        "QuestionNo": 3,
         "Question": "hi",
         "type": "output",
         "options": "",
         "answer": ""
     },
     {
-        "QuestionNo": 2,
+        "QuestionNo": 4,
         "Question": "Bye",
         "type": "bug",
         "options": "",

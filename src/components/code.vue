@@ -52,12 +52,6 @@ import Brace from "vue-bulma-brace";
 import {mapGetters} from "vuex";
 import axios from "axios";
 export default {
-	props: {
-		init: {
-			type: String,
-			default: ""
-		},
-	},
 	data() {
 		return {
 			code: "",
@@ -76,9 +70,6 @@ export default {
 			lang: "GET_LANG",
 			theme: "GET_THEME"
 		})
-	},
-	beforeMount() {
-		if(this.init === "") this.code = this.init;
 	},
 	methods: {
 		clang() {
