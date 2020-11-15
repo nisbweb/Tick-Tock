@@ -1,12 +1,35 @@
 <template>
   <div id="TechnicalQuizMain">
-      <h1 class="is-size-2">
-        {{ questions[quesNumber].Question }}
-      </h1>
-        <div v-if="questions[quesNumber].type === 'code'">
-          <codeEdit />
-        </div>
-      <Buttons @previous="prev" @next="next" @skip="skip"/>
+    <h1 class="is-size-2">
+      {{ questions[quesNumber].Question }}
+    </h1>
+    <div class="container">
+
+      <div v-if="questions[quesNumber].type === 'mcq'">
+        <MCQ
+          :selectedOption="mcqSelectedOption"
+          @select="select($event)"
+          :options="questions[quesNumber].options"
+        />
+      </div>
+      <div
+        class=""
+        v-else-if="questions[quesNumber].type === 'gibb'"
+      >
+        <Gibb
+          :answerVal="answer"
+          @input="gibb = $event"
+        />
+      </div>
+      <div v-else-if="questions[quesNumber].type === 'code'">
+        <codeEdit />
+      </div>
+    </div>
+    <Buttons
+      @previous="prev"
+      @next="next"
+      @submit="submit"
+    />
   </div>
 </template>
 
@@ -14,38 +37,52 @@
 import Buttons from "./BottomButtons";
 import questions from "../techQuestions.json";
 import codeEdit from "./code.vue";
+import Gibb from "./gibb";
+import MCQ from "./mcq";
+import { mapGetters } from "vuex";
 export default {
-	data: function() {
+	data: function () {
 		return {
-			questions
+			questions,
+			mcqSelectedOption: null,
+			gibb: ""
 		};
 	},
-	components:{
+	components: {
 		Buttons,
+		MCQ,
+		Gibb,
 		codeEdit
 	},
 	computed: {
-		quesNumber() {
-			return this.$store.state.techCurrent;
-		}
+		...mapGetters({
+			quesNumber: "GET_TECH"
+		})
 	},
 	methods: {
-		next() {
+		submit() {
+			if (this.questions[this.quesNumber].type === "mcq") {
+				// code to submit mcq answer
+				this.mcqSelectedOption = null;
+			} else if (this.questions[this.quesNumber].type == "gibb") {
+				// code to submit gibberish
+				this.gibb = "";
+			}
+			// code to handle submissionof code type question's answer
 			this.$store.dispatch("TECH_INCREMENT_ACTION", this.questions[this.quesNumber]);
 		},
 		prev() {
 			this.$store.commit("TECH_DECREMENT");
 		},
-		skip() {
+		next() {
 			var temp = Object.assign({}, this.questions[this.quesNumber]);
 			temp.domain = "tech";
 			this.$store.commit("ADD_SKIPPED_QUES", temp);
 			this.$store.commit("TECH_INCREMENT");
 		},
+		select(option) {
+			this.mcqSelectedOption = this.mcqSelectedOption === option ? null : option;
+		}
 	}
 };
 </script>
-
-<style>
-
-</style>
