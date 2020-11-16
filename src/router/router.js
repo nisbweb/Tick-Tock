@@ -3,7 +3,8 @@ import VueRouter from "vue-router";
 import Login from "../views/login.vue";
 import Quiz from "../views/Quiz.vue";
 import liveLeaderBoard from "../views/liveLeaderBoard.vue";
-
+import firebase from "firebase/app";
+import store from "../store/store";
 Vue.use(VueRouter);
 
 const routes = [
@@ -40,18 +41,26 @@ const router = new VueRouter({
 	routes,
 });
 
-router.beforeEach( (to, from, next) => {
+firebase.getCurrentUser = () => {
+	return new Promise((resolve, reject) => {
+		const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+			unsubscribe();
+			resolve(user);
+		}, reject);
+	});
+};
+
+
+router.beforeEach( async (to, from, next) => {
 	const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-	if (!requiresAuth) {
+	const user = await firebase.getCurrentUser();
+	if (requiresAuth && !user) {
+		next("");
+	} else if(user) {
+		store.dispatch("FETCH_USER", user.uid);
 		next();
-	} else {
-		if (localStorage.getItem("logged")) {
-			next();
-		} else {
-			router.replace({
-				path: "/",
-			});
-		}
+	}else {
+		next();
 	}
 });
 

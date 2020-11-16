@@ -6,23 +6,41 @@
           <h1 class="title is-size-1">
             Dream Code
           </h1>
-          <h2 v-if="user.id">
-            Please wait for the event to start
-          </h2>
-          <h2 v-else class="subtitle">
+          <div
+            class=""
+            v-if="user.id"
+          >
+            <h2>
+              Please wait for the event to start <br>
+            </h2>
+            <b-button v-if="user.startTime === null" type="is-success" @click="startTimer">Begin</b-button>
+          </div>
+          <h2
+            v-else
+            class="subtitle"
+          >
             Please Login
             <br /><br />
           </h2>
-          <div v-if="!user.id" class="flex is-justify-content-center is-align-items-center">
-            <b-field label="Name" horizontal>
+          <div
+            v-if="user.id ===null"
+            class="flex is-justify-content-center is-align-items-center"
+          >
+            <b-field
+              label="Name"
+              horizontal
+            >
               <b-input
                 placeholder="Name"
                 v-model="displayName"
                 type="text"
                 icon="account"
-                ></b-input>
+              ></b-input>
             </b-field>
-            <b-field label="Email" horizontal>
+            <b-field
+              label="Email"
+              horizontal
+            >
               <b-input
                 placeholder="Email"
                 v-model="email"
@@ -31,19 +49,32 @@
               >
               </b-input>
             </b-field>
-            <b-field label="Password" horizontal>
+            <b-field
+              label="Password"
+              horizontal
+            >
               <b-input
                 placeholder="Password"
                 v-model="password"
                 type="password"
                 icon="key"
-                ></b-input>
+              ></b-input>
             </b-field>
             <hr />
-            <b-button @click="emailLogin" type="is-success">Sign in with Email</b-button> &nbsp;
-            <b-button @click="googles" type="is-danger">Sign in with Google</b-button>
+            <b-button
+              @click="emailLogin"
+              type="is-success"
+            >Sign in with Email</b-button> &nbsp;
+            <b-button
+              @click="googles"
+              type="is-danger"
+            >Sign in with Google</b-button>
             <br>
-            <span v-if="promp" class="is-size-3" style="color: red">
+            <span
+              v-if="promp"
+              class="is-size-3"
+              style="color: red"
+            >
               The quiz has Started, please login
             </span>
           </div>
@@ -77,6 +108,7 @@
 <script>
 import firebaseApp from "../firebaseConfig";
 import firebase from "firebase";
+import { mapGetters } from "vuex";
 export default {
 	name: "Login",
 	data() {
@@ -89,21 +121,26 @@ export default {
 		};
 	},
 	computed: {
-		user() {
-			return this.$store.state.user;
-		},
+		...mapGetters({
+			user: "GET_USER"
+		})
 	},
 	watch: {
 		// eslint-disable-next-line no-unused-vars
 		admin(newValue, oldValue) {
-			if(newValue && this.user.id) this.$router.push("/quiz");
+			if (newValue && this.user.id) {
+				this.$router.push("/quiz");
+				this.startTimer();
+			}
 			else this.promp = true;
 		}
 	},
 	beforeMount() {
+		// this.$store.dispatch("FETCH_USER");
 		firebaseApp.db.collection("admin").doc("XcEoKorsJfpu2TrWbuoA").onSnapshot(value => {
 			this.admin = value.data().start;
-			console.log(this.admin);
+			console.log(value.data());
+			this.$store.commit("TOTAL_USER", { total: value.data().totalUser });
 		});
 	},
 	methods: {
@@ -128,7 +165,7 @@ export default {
 					solvedNotTech: 0,
 				});
 				localStorage.setItem("logged", true);
-				if(this.admin) this.$router.push("/quiz");
+				if (this.admin) this.$router.push("/quiz");
 			}).catch(error => {
 				this.$buefy.toast.open({
 					message: error.message,
@@ -158,12 +195,22 @@ export default {
 					solvedNotTech: 0,
 				});
 				localStorage.setItem("logged", true);
-				if(this.admin) this.$router.push("/quiz");
+				if (this.admin) this.$router.push("/quiz");
 			}).catch(error => {
 				this.$buefy.toast.open({
 					message: error.message,
 					type: "is-danger",
 				});
+			});
+		},
+		startTimer(){
+			firebaseApp.db.collection("user").doc(this.user.id).update({
+				startTime: new Date()
+			}).then(() => {
+				this.$store.dispatch("FETCH_USER", this.user.id);
+				this.$router.push({path:"/quiz"});
+			}).catch(err => {
+				console.error(err);
 			});
 		}
 	}

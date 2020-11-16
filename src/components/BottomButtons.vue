@@ -15,12 +15,12 @@
       <div class="buttonWrapperNext">
         <b-button
           class="mx-2"
-          type="is-warning"
-          @click="$emit('skip')"
-        >Skip</b-button>
+          type="is-success"
+          @click="$emit('submit')"
+        >Submit</b-button>
         <b-button
           class="mx-2"
-          type="is-success"
+          type="is-warning"
           @click="$emit('next')"
         >Next</b-button>
       </div>
