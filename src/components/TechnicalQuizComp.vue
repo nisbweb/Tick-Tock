@@ -86,7 +86,7 @@ export default {
 	},
 	methods: {
 		submit() {
-			Axios.post("http://localhost:5000/api/tech", {
+			Axios.post("http://91.211.155.6:5000/api/tech", {
 				question: "ques_tech" + this.currentQuestion,
 				answer: this.mcqSelectedOption
 			}, {
