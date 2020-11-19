@@ -145,6 +145,10 @@ export default {
 			const days = Math.abs(moment().format("DDD") - moment.unix(this.startTime.seconds).format("DDD"));
 			this.Hours = hours + days * 12;
 			// setInterval calls an anonymous function every 1000 milisecond (every second). this is to increment time
+			setTimeout(() => {
+				this.setTime();
+			}, 600000);
+
 			clearInterval(this.timer);
 			this.timer = setInterval(() => {
 				// eslint-disable-next-line no-debugger
