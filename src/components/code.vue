@@ -35,11 +35,11 @@
             </b-select>
 
             </b-field>
-            <b-button style="margin: 5px" type="is-warning">Test</b-button>
+            <b-button style="margin: 5px" @click="test" type="is-warning">Test</b-button>
             <h1 class="is-size-3">
               Output
             </h1>
-            <div style="height: 200px; background-color: black; margin-right: 20px">
+            <div style="height: 200px; background-color: black;">
               {{  }}
             </div>
           </div>
@@ -49,17 +49,13 @@
 
 <script>
 import Brace from "vue-bulma-brace";
+import {mapGetters} from "vuex";
+import axios from "axios";
 export default {
-	props: {
-		init: {
-			type: String,
-			default: ""
-		},
-	},
 	data() {
 		return {
 			code: "",
-			langs: ["c_cpp", "python", "java", "javascript"],
+			langs: ["c_cpp", "python", "java"],
 			themes: ["monokai","twilight" , "solarized_light"],
 			tempL: null,
 			tempT: null,
@@ -70,15 +66,10 @@ export default {
 		Brace
 	},
 	computed: {
-		lang() {
-			return this.$store.state.lang;
-		},
-		theme() {
-			return this.$store.state.theme;
-		}
-	},
-	beforeMount() {
-		if(this.init === "") this.code = this.init;
+		...mapGetters({
+			lang: "GET_LANG",
+			theme: "GET_THEME"
+		})
 	},
 	methods: {
 		clang() {
@@ -87,6 +78,27 @@ export default {
 		ctheme() {
 			this.$store.commit("UPDATE_THEME", this.tempT);
 		},
+		test() {
+			axios.post(
+				"http://run.glot.io/languages/python/latest",
+				{
+					"files": [
+						{
+							"name": "main.py",
+							content: "print('42')"
+						}
+					]
+				},
+				{
+					headers: {
+						"Authorization": "1cf61367-cb64-4fd7-9470-c9e31199a399",
+						"Access-Control-Allow-Origin": "*",
+						"Content-Type": "application/json"
+					}
+				}
+			).then(Response => console.log(Response.data)).catch();
+			// 1cf61367-cb64-4fd7-9470-c9e31199a399
+		}
 	}
 };
 </script>

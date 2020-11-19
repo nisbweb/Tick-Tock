@@ -14,13 +14,21 @@ const store = new Vuex.Store({
 			startTime: null,
 			endTime: null,
 			solvedTech: null,
-			solvedNotTech: null,
-			skippedQues: []
+			solvedNonTech: null,
+			skippedQues: {
+				tech: [],
+				non: []
+			}
 		},
 		techCurrent: 0,
 		nonTechCurrent: 0,
 		lang: 0,
-		theme: 0
+		theme: 0,
+		nonTechAttempt: 0,
+		techAttempt: 0,
+		totalUser: 0,
+		skippTechNum: 0,
+		skippNonTechNum: 0
 	},
 	mutations: {
 		EDIT_USER: (state, payload) => {
@@ -39,15 +47,19 @@ const store = new Vuex.Store({
 			if(payload.endTime) {
 				state.user.endTime = payload.endTime;
 			}
-			if(payload.solvedNotTech) {
-				state.user.solvedNotTech = payload.solvedNotTech;
+			if(payload.solvedNonTech) {
+				state.user.solvedNonTech = payload.solvedNonTech;
 			}
 			if(payload.solvedTech) {
 				state.user.solvedTech = payload.solvedTech;
 			}
 		},
 		ADD_SKIPPED_QUES: (state, payload) => {
-			state.user.skippedQues.push(payload);
+			if(payload.type === "non") {
+				state.user.skippedQues.non.push(payload.num);
+			} else {
+				state.user.skippedQues.tech.push(payload.num);
+			}
 		},
 		TECH_INCREMENT: (state) => {
 			state.techCurrent++;
@@ -61,32 +73,69 @@ const store = new Vuex.Store({
 		NON_TECH_DECREMENT: (state) => {
 			state.nonTechCurrent--;
 		},
+		TECH_ATTEMPT: (state) => {
+			state.techAttempt++;
+		},
+		NON_TECH_ATTEMPT: (state) => {
+			state.nonTechAttempt++;
+		},
 		UPDATE_LANG: (state, payload) => {
 			state.lang = payload;
 		},
 		UPDATE_THEME: (state, payload) => {
 			state.theme = payload;
+		},
+		TOTAL_USER: (state, payload) => {
+			state.totalUser = payload.total;
 		}
 	},
 	actions: {
-		FETCH_USER: (context, payload) => {
-			firebaseApp.db.collection("users").doc(payload.id).get().then(val => {
-				var temp = {
-					id: val.id,
-					data: val.data()
-				};
-				context.commit("EDIT_USER", temp);
+		FETCH_USER: ({commit}, payload) => {
+			firebaseApp.db.collection("user").doc(payload).get().then(val => {
+				// // console.log(val.id, val.data());
+				commit("EDIT_USER", val.data());
+			}).catch(err => {
+				console.error(err);
 			});
 		},
 		TECH_INCREMENT_ACTION: (context, payload) => {
-			context.state.user.skippedQues = context.state.user.skippedQues.filter((el) => el.QuestionNo != payload.QuestionNo && el.domain == "tech");
+			// console.log(payload);
+			context.state.user.skippedQues = context.state.user.skippedQues.filter((el) => el.id != payload.id && el.domain == "tech");
 			context.commit("TECH_INCREMENT");
 		},
 		NON_TECH_INCREMENT_ACTION: (context, payload) => {
-			context.state.user.skippedQues = context.state.user.skippedQues.filter((el) => el.QuestionNo != payload.QuestionNo && el.domain == "non");
+			context.state.user.skippedQues = context.state.user.skippedQues.filter((el) => el.id != payload.id && el.domain == "non");
 			context.commit("NON_TECH_INCREMENT");
 		}
 	},
+	getters:{
+		GET_USER: state => state.user,
+		GET_LANG: state => state.lang,
+		GET_THEME: state => state.theme,
+		GET_TECH: state => state.techCurrent,
+		GET_NONTECH: state => state.nonTechCurrent,
+		GET_TECH_AT: state => state.techAttempt,
+		GET_NONTECH_AT: state => state.nonTechAttempt,
+		GET_SKIPS: state => state.user.skippedQues.length,
+		GET_START_TIME: state => state.user.startTime,
+		GET_SKIPPED_NUMBERS_TECH: state => {
+			var temp = [];
+			state.user.skippedQues.forEach(el => {
+				if(el.domain === "tech") temp.push(el.id);
+			});
+			return temp;
+		},
+		GET_SKIPPED_NUMBERS_NON_TECH: state => {
+			var temp = [];
+			state.user.skippedQues.forEach(el => {
+				if(el.domain === "non") temp.push(el.id);
+			});
+			return temp;
+		},
+		GET_TOTAL_USER: state => state.totalUser,
+		GET_TECH_SKIPPED: state => state.skippTechNum,
+		GET_NON_TECH_SKIPPED: state => state.skippNonTechNum
+	}
 });
 
 export default store;
