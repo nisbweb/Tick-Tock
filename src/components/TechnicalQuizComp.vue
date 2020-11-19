@@ -86,13 +86,14 @@ export default {
 	},
 	methods: {
 		submit() {
-			Axios.post("https://91.211.155.6:5000/api/tech", {
+			Axios.post("http://91.211.155.6:5000/api/tech", {
 				question: "ques_tech" + this.currentQuestion,
 				answer: this.mcqSelectedOption
 			}, {
 				headers: {
 					authorization: "1 " + localStorage.getItem("uid"),
-					"content-type": "application/json"
+					"content-type": "application/json",
+					"Access-Control-Allow-Origin": "*"
 				}
 			// eslint-disable-next-line no-unused-vars
 			}).then(response => {

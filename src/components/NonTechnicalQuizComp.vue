@@ -83,7 +83,8 @@ export default {
       }, {
           headers: {
               authorization: "1 " + localStorage.getItem("uid"),
-              "content-type": "application/json"
+              "content-type": "application/json",
+              "Access-Control-Allow-Origin": "*"
           }
       }).then(response => {
           // console.log(response.data);
