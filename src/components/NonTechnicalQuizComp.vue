@@ -77,7 +77,7 @@ export default {
 	},
 	methods: {
 		submit() {
-			 Axios.post("http://91.211.155.6:5000/api/nontech", {
+			 Axios.post("https://91.211.155.6:5000/api/nontech", {
           question: "ques_non_tech" + this.currentQuestion,
           answer: this.mcqSelectedOption
       }, {

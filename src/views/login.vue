@@ -4,7 +4,7 @@
       <div class="hero-body">
         <div class="container">
           <h1 class="title is-size-1">
-            Dream Code
+            Tick-Tock ⏳
           </h1>
           <h2
             class="subtitle"
@@ -137,7 +137,7 @@ export default {
 				localStorage.setItem("uid",data.user.uid);
 				this.$router.push("/quiz");
 			}).catch(error => {
-				// console.log(error.message);
+				console.log(error);
 				this.$buefy.toast.open({
 					message: error.message,
 					type: "is-danger",
