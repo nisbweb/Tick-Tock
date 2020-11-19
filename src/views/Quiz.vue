@@ -8,19 +8,19 @@
           :to="{ path: '/' }"
           class="is-size-5 has-text-weight-bold"
         >
-          Tick-Tock
+          Tick-Tock ⏳
         </b-navbar-item>
       </template>
     </b-navbar>
     <div v-if="started">
         <!-- status level -->
         <nav class="level is-mobile">
-        <div class="level-item has-text-centered">
+        <!-- <div class="level-item has-text-centered">
             <div>
             <p class="heading">Time</p>
             <p class="title">{{ Hours !== 0 ? `${Hours}:` : '' }}{{getTwoDigitNumber(Minutes)}}:{{ getTwoDigitNumber(Seconds) }}</p>
             </div>
-        </div>
+        </div> -->
         <div class="level-item has-text-centered">
             <div>
             <p class="heading">Technical</p>
@@ -107,6 +107,13 @@ export default {
 				this.setTime();
 
 			}
+		},
+		started(newd) {
+			if(!newd) {
+				firebaseApp.db.collection('user').doc(localStorage.getItem('uid')).update({
+					endTime: Date.now()
+				}).then(data => this.$router.push('/final'))
+			}
 		}
 	},
 	mounted() {
@@ -124,7 +131,7 @@ export default {
 			this.nonTechCount = this.user.attemptNonTech.length;
 			this.currentQuestionTech = this.user.currentQuestionTech;
 			this.currentQuestionNonTech = this.user.currentQuestionNonTech;
-			this.skipCount = (this.user.maxQuestionTech + this.user.maxQuestionNonTech) - (this.user.solvedTech.length + this.user.solvedNonTech.length);
+			this.skipCount = (this.user.maxQuestionTech + this.user.maxQuestionNonTech) - (this.user.attemptTech.length + this.user.attemptNonTech.length);
 		});
 	},
 	methods: {

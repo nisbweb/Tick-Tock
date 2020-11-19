@@ -28,10 +28,10 @@
         <outputt @select="val" :ques="question"/>
       </div>
     </div>
-    <div v-else class="container">
-      <span class="is-size-1">
+    <div v-else style="height: 50vh; width: 100%; display: flex; justify-content: center; align-items: center" class="notification is-success container">
+      <div style="width: 200px; height: 100px" class="is-size-1">
         Solved
-      </span>
+      </div>
     </div>
     <Buttons
       @previous="prev"
@@ -77,7 +77,7 @@ export default {
 	},
 	methods: {
 		submit() {
-			 Axios.post("https://91.211.155.6:5000/api/nontech", {
+			 Axios.post("http://91.211.155.6:5000/api/nontech", {
           question: "ques_non_tech" + this.currentQuestion,
           answer: this.mcqSelectedOption
       }, {
@@ -88,11 +88,10 @@ export default {
           }
       }).then(response => {
           // console.log(response.data);
-          let k = this.qsolved.filter(e => e !== "ques_non_tech" + this.currentQuestion).length
-          if(k == 0) this.qsolved.push(this.question.id)
-          console.log(this.qsolved)
+				this.qsolved.push(this.question.id)
+				let uniqueChars = [...new Set(this.qsolved)];
           firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
-                attemptNonTech: this.qsolved,
+                attemptNonTech: uniqueChars,
                 currentQuestionNonTech: this.currentQuestion+1,
                 maxQuestionNonTech: this.currentQuestion+1,
 			});
@@ -114,12 +113,19 @@ export default {
             }
 		},
 		next() {
-			firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
+			if(this.currentQuestion < 30) {
+        firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
                 currentQuestionNonTech: this.currentQuestion+1,
                 attemptNonTech: this.qsolved,
                 maxQuestionNonTech: this.currentQuestion+1,
 			});
       this.currentQuestion++;
+      } else {
+        this.$buefy.toast.open({
+          message: 'This is the last question of non technical genre',
+          type: 'is-success'
+        })
+      }
 		},
 		select(option) {
 			this.mcqSelectedOption = this.mcqSelectedOption === option ? null : option;
@@ -131,12 +137,9 @@ export default {
 				temp.id = data.id;
 				this.question = temp;
         // console.log(this.qsolved)
-        let ded = this.qsolved.filter(e => e != data.id)
-        console.log(ded)
-        console.log(ded.length)
-        this.solved = false
-        if(ded.length == 0 && this.qsolved.length != 0) this.solved = true
-			});
+				this.solved = false;
+				if (this.qsolved.includes(data.id)) this.solved = true;
+			})
 
 		}
 	}

@@ -34,13 +34,10 @@
         />
       </div>
     </div>
-    <div
-      v-else
-      class="container"
-    >
-      <span class="is-size-1">
+    <div v-else style="height: 50vh; width: 100%; display: flex; justify-content: center; align-items: center" class="notification is-success container">
+      <div style="width: 200px; height: 100px" class="is-size-1">
         Solved
-      </span>
+      </div>
     </div>
     <Buttons
       @previous="prev"
@@ -92,17 +89,15 @@ export default {
 			}, {
 				headers: {
 					authorization: "1 " + localStorage.getItem("uid"),
-					"content-type": "application/json",
-					"Access-Control-Allow-Origin": "*"
+					"content-type": "application/json"
 				}
 			// eslint-disable-next-line no-unused-vars
 			}).then(response => {
 				// console.log(response.data);
-				let k = this.qsolved.filter(e => e !== "ques_tech" + this.currentQuestion).length;
-				if (k == 0) this.qsolved.push(this.question.id);
-				console.log(this.qsolved);
+				this.qsolved.push(this.question.id)
+				let uniqueChars = [...new Set(this.qsolved)];
 				firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
-					attemptTech: this.qsolved,
+					attemptTech: uniqueChars,
 					currentQuestionTech: this.currentQuestion + 1,
 					maxQuestionTech: this.currentQuestion + 1,
 				});
@@ -124,12 +119,19 @@ export default {
 			}
 		},
 		next() {
-			firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
+			if(this.currentQuestion < 24) {
+				firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
 				currentQuestionTech: this.currentQuestion + 1,
 				attemptTech: this.qsolved,
 				maxQuestionTech: this.currentQuestion + 1,
 			});
 			this.currentQuestion++;
+			} else {
+				this.$buefy.toast.open({
+          message: 'This is the last question of technical genre',
+          type: 'is-success'
+        })
+			}
 		},
 		select(option) {
 			this.mcqSelectedOption = this.mcqSelectedOption === option ? null : option;
@@ -140,12 +142,8 @@ export default {
 				var temp = Object.assign({}, data.data());
 				temp.id = data.id;
 				this.question = temp;
-				// console.log(this.qsolved)
-				let ded = this.qsolved.filter(e => e != data.id);
-				console.log(ded);
-				console.log(ded.length);
 				this.solved = false;
-				if (ded.length == 0 && this.qsolved.length != 0) this.solved = true;
+				if (this.qsolved.includes(data.id)) this.solved = true;
 			});
 
 		}

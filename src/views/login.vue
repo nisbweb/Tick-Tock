@@ -101,6 +101,9 @@ export default {
 			promp: false
 		};
 	},
+	beforeMount() {
+		if(localStorage.getItem('uid') != null || localStorage.getItem('uid') != undefined) this.$router.push('/quiz')
+	},
 	methods: {
 		emailLogin() {
 			firebaseApp.auth.createUserWithEmailAndPassword(this.email, this.password).then(data => {
