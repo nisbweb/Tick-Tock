@@ -6,24 +6,13 @@
           <h1 class="title is-size-1">
             Dream Code
           </h1>
-          <div
-            class=""
-            v-if="user.id"
-          >
-            <h2>
-              Please wait for the event to start <br>
-            </h2>
-            <b-button v-if="user.startTime === null" type="is-success" @click="startTimer">Begin</b-button>
-          </div>
           <h2
-            v-else
             class="subtitle"
           >
             Please Login
             <br /><br />
           </h2>
           <div
-            v-if="user.id ===null"
             class="flex is-justify-content-center is-align-items-center"
           >
             <b-field
@@ -70,13 +59,6 @@
               type="is-danger"
             >Sign in with Google</b-button>
             <br>
-            <span
-              v-if="promp"
-              class="is-size-3"
-              style="color: red"
-            >
-              The quiz has Started, please login
-            </span>
           </div>
         </div>
       </div>
@@ -108,7 +90,6 @@
 <script>
 import firebaseApp from "../firebaseConfig";
 import firebase from "firebase";
-import { mapGetters } from "vuex";
 export default {
 	name: "Login",
 	data() {
@@ -120,53 +101,43 @@ export default {
 			promp: false
 		};
 	},
-	computed: {
-		...mapGetters({
-			user: "GET_USER"
-		})
-	},
-	watch: {
-		// eslint-disable-next-line no-unused-vars
-		admin(newValue, oldValue) {
-			if (newValue && this.user.id) {
-				this.$router.push("/quiz");
-				this.startTimer();
-			}
-			else this.promp = true;
-		}
-	},
-	beforeMount() {
-		// this.$store.dispatch("FETCH_USER");
-		firebaseApp.db.collection("admin").doc("XcEoKorsJfpu2TrWbuoA").onSnapshot(value => {
-			this.admin = value.data().start;
-			console.log(value.data());
-			this.$store.commit("TOTAL_USER", { total: value.data().totalUser });
-		});
-	},
 	methods: {
 		emailLogin() {
 			firebaseApp.auth.createUserWithEmailAndPassword(this.email, this.password).then(data => {
-				firebaseApp.db.collection("user").doc(data.user.uid).set({
+				// console.log("user/"+data.user.uid)
+				console.log({
 					displayName: this.displayName,
 					email: this.email,
 					id: data.user.uid,
 					startTime: null,
 					endTime: null,
-					solvedTech: 0,
-					solvedNotTech: 0,
+					solvedTech: [],
+					solvedNonTech: [],
+					currentQuestionTech:0,
+					currentQuestionNonTech:0,
+					maxQuestionTech:0,
+					maxQuestionNonTech:0
 				});
-				this.$store.commit("EDIT_USER", {
+				firebaseApp.db.doc("user/"+data.user.uid).set({
 					displayName: this.displayName,
 					email: this.email,
 					id: data.user.uid,
 					startTime: null,
 					endTime: null,
-					solvedTech: 0,
-					solvedNotTech: 0,
+					solvedTech: [],
+					attemptTech:[],
+					attemptNonTech: [],
+					solvedNonTech: [],
+					currentQuestionTech:0,
+					currentQuestionNonTech:0,
+					maxQuestionTech:0,
+					maxQuestionNonTech:0
 				});
 				localStorage.setItem("logged", true);
-				if (this.admin) this.$router.push("/quiz");
+				localStorage.setItem("uid",data.user.uid);
+				this.$router.push("/quiz");
 			}).catch(error => {
+				// console.log(error.message);
 				this.$buefy.toast.open({
 					message: error.message,
 					type: "is-danger",
@@ -182,35 +153,25 @@ export default {
 					id: data.user.uid,
 					startTime: null,
 					endTime: null,
-					solvedTech: 0,
-					solvedNotTech: 0,
+					solvedTech: [],
+          
+					attemptTech:[],
+					attemptNonTech: [],
+					solvedNonTech: [],
+					currentQuestionTech:0,
+					currentQuestionNonTech:0,
+					maxQuestionTech:0,
+					maxQuestionNonTech:0
 				});
-				this.$store.commit("EDIT_USER", {
-					displayName: data.user.displayName,
-					email: data.user.email,
-					id: data.user.uid,
-					startTime: null,
-					endTime: null,
-					solvedTech: 0,
-					solvedNotTech: 0,
-				});
+				localStorage.setItem("uid",data.user.uid);
 				localStorage.setItem("logged", true);
-				if (this.admin) this.$router.push("/quiz");
+				this.$router.push("/quiz");
+				
 			}).catch(error => {
 				this.$buefy.toast.open({
 					message: error.message,
 					type: "is-danger",
 				});
-			});
-		},
-		startTimer(){
-			firebaseApp.db.collection("user").doc(this.user.id).update({
-				startTime: new Date()
-			}).then(() => {
-				this.$store.dispatch("FETCH_USER", this.user.id);
-				this.$router.push({path:"/quiz"});
-			}).catch(err => {
-				console.error(err);
 			});
 		}
 	}

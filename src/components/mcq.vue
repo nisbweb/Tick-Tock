@@ -1,7 +1,7 @@
 <template>
   <div id="mcqMain">
     <div
-      class="options"
+      class="options my-5"
       v-if="options.length > 0"
     >
       <div class="container">

@@ -3,7 +3,10 @@
     <h1 class="is-size-2">
       {{ question.Question }}
     </h1>
-    <div class="container">
+    <div
+      v-if="!solved"
+      class="container"
+    >
 
       <div v-if="question.type === 'mcq'">
         <MCQ
@@ -24,9 +27,20 @@
       <div v-else-if="question.type === 'code'">
         <codeEdit />
       </div>
-	<div v-else-if="question.type === 'output'">
-        <outputt :ques="question"/>
+      <div v-else-if="question.type === 'output'">
+        <outputt
+          @select="val"
+          :ques="question"
+        />
       </div>
+    </div>
+    <div
+      v-else
+      class="container"
+    >
+      <span class="is-size-1">
+        Solved
+      </span>
     </div>
     <Buttons
       @previous="prev"
@@ -41,15 +55,19 @@ import Buttons from "./BottomButtons";
 import codeEdit from "./code.vue";
 import Gibb from "./gibb";
 import MCQ from "./mcq";
-import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
 import firebaseApp from "../firebaseConfig";
 import outputt from "./output.vue";
+import Axios from "axios";
 export default {
 	data: function () {
 		return {
 			question: {},
 			mcqSelectedOption: null,
-			gibb: ""
+			gibb: "",
+			currentQuestion: 0,
+			qsolved: [],
+			solved: false
 		};
 	},
 	components: {
@@ -59,57 +77,76 @@ export default {
 		codeEdit,
 		outputt
 	},
-	computed: {
-		...mapGetters({
-			quesNumber: "GET_TECH",
-			skipped: "GET_SKIPPED_NUMBERS_TECH"
-		})
-	},
 	beforeMount() {
-		this.getQues();
+		firebaseApp.db.doc("user/" + localStorage.getItem("uid")).onSnapshot(snap => {
+			this.currentQuestion = snap.data().currentQuestionTech,
+			this.qsolved = snap.data().attemptTech;
+			this.getQues();
+		});
 	},
 	methods: {
 		submit() {
-			if (this.question.type === "mcq") {
-				// code to submit mcq answer
-				this.mcqSelectedOption = null;
-			} else if (this.question.type == "gibb") {
-				// code to submit gibberish
-				this.gibb = "";
-			}
-			// code to handle submissionof code type question's answer
-			firebaseApp.db.collection("users").doc(this.$store.state.user.id).update({
-				techQnum: this.quesNumber
-			});
-			this.$store.dispatch("TECH_INCREMENT_ACTION", this.question);
-			this.$store.commit("TECH_ATTEMPT");
-			this.getQues();
+			Axios.post("http://localhost:5000/api/tech", {
+				question: "ques_tech" + this.currentQuestion,
+				answer: this.mcqSelectedOption
+			}, {
+				headers: {
+					authorization: "1 " + localStorage.getItem("uid"),
+					"content-type": "application/json"
+				}
+			// eslint-disable-next-line no-unused-vars
+			}).then(response => {
+				// console.log(response.data);
+				let k = this.qsolved.filter(e => e !== "ques_tech" + this.currentQuestion).length;
+				if (k == 0) this.qsolved.push(this.question.id);
+				console.log(this.qsolved);
+				firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
+					attemptTech: this.qsolved,
+					currentQuestionTech: this.currentQuestion + 1,
+					maxQuestionTech: this.currentQuestion + 1,
+				});
+				this.currentQuestion++;
+			}).catch(error => this.$buefy.toast.open({
+				message: error.message,
+				type: "is-danger"
+			}));
+		},
+		val(opt) {
+			// console.log(opt)
+			this.mcqSelectedOption = opt;
 		},
 		prev() {
-			this.$store.commit("TECH_DECREMENT");
-			this.getQues();
+			if (this.currentQuestion != 0) {
+				firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
+					currentQuestionTech: this.currentQuestion - 1,
+				});
+			}
 		},
 		next() {
-			var temp = Object.assign({}, this.question);
-			temp.domain = "tech";
-			this.$store.commit("ADD_SKIPPED_QUES", temp);
-			this.$store.commit("TECH_INCREMENT");
-			console.log(this.skipped);
-			firebaseApp.db.collection("user").doc(this.$store.state.user.id).update({
-				skipped: this.skipped
+			firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
+				currentQuestionTech: this.currentQuestion + 1,
+				attemptTech: this.qsolved,
+				maxQuestionTech: this.currentQuestion + 1,
 			});
-			this.getQues();
+			this.currentQuestion++;
 		},
 		select(option) {
 			this.mcqSelectedOption = this.mcqSelectedOption === option ? null : option;
 		},
 		getQues() {
-			firebaseApp.db.collection("ques").doc("ques_tech" + this.quesNumber).get().then(data => {
-				console.log(data.data());
+			firebaseApp.db.collection("ques").doc("ques_tech" + this.currentQuestion).get().then(data => {
+				// console.log(data.data());
 				var temp = Object.assign({}, data.data());
 				temp.id = data.id;
 				this.question = temp;
+				// console.log(this.qsolved)
+				let ded = this.qsolved.filter(e => e != data.id);
+				console.log(ded);
+				console.log(ded.length);
+				this.solved = false;
+				if (ded.length == 0 && this.qsolved.length != 0) this.solved = true;
 			});
+
 		}
 	}
 };

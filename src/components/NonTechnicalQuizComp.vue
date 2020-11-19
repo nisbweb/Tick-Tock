@@ -1,9 +1,9 @@
 <template>
-  <div id="TechnicalQuizMain">
+  <div id="NonTechnicalQuizMain">
     <h1 class="is-size-2">
       {{ question.Question }}
     </h1>
-    <div class="contsinrt">
+    <div v-if="!solved" class="container">
 
       <div v-if="question.type === 'mcq'">
         <MCQ
@@ -21,6 +21,17 @@
           @input="gibb = $event"
         />
       </div>
+      <div v-else-if="question.type === 'code'">
+        <codeEdit />
+      </div>
+	<div v-else-if="question.type === 'output'">
+        <outputt @select="val" :ques="question"/>
+      </div>
+    </div>
+    <div v-else class="container">
+      <span class="is-size-1">
+        Solved
+      </span>
     </div>
     <Buttons
       @previous="prev"
@@ -32,76 +43,101 @@
 
 <script>
 import Buttons from "./BottomButtons";
+import codeEdit from "./code.vue";
 import Gibb from "./gibb";
 import MCQ from "./mcq";
-import firebaseApp from "../firebaseConfig";
 import { mapGetters } from "vuex";
+import firebaseApp from "../firebaseConfig";
+import outputt from "./output.vue";
+import Axios from 'axios'
 export default {
 	data: function () {
 		return {
 			question: {},
-			answer: "",
-			mcqSelectedOption: null
+			mcqSelectedOption: null,
+            gibb: "",
+            currentQuestion:0,
+            qsolved: [],
+            solved: false
 		};
-	},
+    },
 	components: {
 		Buttons,
 		MCQ,
-		Gibb
-	},
-	computed: {
-		...mapGetters({
-			quesNumber: "GET_NONTECH",
-			skipped: "GET_SKIPPED_NUMBERS_TECH"
-		})
+		Gibb,
+		codeEdit,
+		outputt
 	},
 	beforeMount() {
-		this.getQues();
+        firebaseApp.db.doc("user/"+localStorage.getItem('uid')).onSnapshot(snap => {
+            this.currentQuestion = snap.data().currentQuestionNonTech,
+            this.qsolved = snap.data().attemptNonTech
+            this.getQues();
+        })
 	},
 	methods: {
 		submit() {
-			if (this.questions[this.quesNumber].type === "mcq") {
-				// code to submit mcq answer
-				this.mcqSelectedOption = null;
-			} else if (this.questions[this.quesNumber].type == "gibb") {
-				// code to submit gibberish
-				this.gibb = "";
-			}
-			// code to handle submissionof code type question's answer
-			firebaseApp.db.collection("users").doc(this.$store.state.user.id).update({
-				nontechQnum: this.quesNumber
+			 Axios.post("http://localhost:5000/api/nontech", {
+          question: "ques_non_tech" + this.currentQuestion,
+          answer: this.mcqSelectedOption
+      }, {
+          headers: {
+              authorization: "1 " + localStorage.getItem("uid"),
+              "content-type": "application/json"
+          }
+      }).then(response => {
+          // console.log(response.data);
+          let k = this.qsolved.filter(e => e !== "ques_non_tech" + this.currentQuestion).length
+          if(k == 0) this.qsolved.push(this.question.id)
+          console.log(this.qsolved)
+          firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
+                attemptNonTech: this.qsolved,
+                currentQuestionNonTech: this.currentQuestion+1,
+                maxQuestionNonTech: this.currentQuestion+1,
 			});
-			this.$store.dispatch("TECH_INCREMENT_ACTION", this.question);
-			this.$store.commit("NON_TECH_ATTEMPT");
-			this.getQues();
+      this.currentQuestion++;
+      }).catch(error => this.$buefy.toast.open({
+          message: error.message,
+          type: "is-danger"
+      }));
 		},
+    val(opt) { 
+      // console.log(opt)
+      this.mcqSelectedOption = opt
+    },
 		prev() {
-			this.$store.commit("TECH_DECREMENT");
-			this.getQues();
+            if(this.currentQuestion != 0) {
+              firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
+                currentQuestionNonTech: this.currentQuestion-1,
+			});
+            }
 		},
 		next() {
-			var temp = Object.assign({}, this.question);
-			temp.domain = "tech";
-			this.$store.commit("ADD_SKIPPED_QUES", temp);
-			this.$store.commit("TECH_INCREMENT");
-			this.getQues();
-			firebaseApp.db.collection("user").doc(this.$store.state.user.id).update({
-				skipped: this.skipped
+			firebaseApp.db.collection("user").doc(localStorage.getItem("uid")).update({
+                currentQuestionNonTech: this.currentQuestion+1,
+                attemptNonTech: this.qsolved,
+                maxQuestionNonTech: this.currentQuestion+1,
 			});
+      this.currentQuestion++;
 		},
 		select(option) {
 			this.mcqSelectedOption = this.mcqSelectedOption === option ? null : option;
 		},
 		getQues() {
-			firebaseApp.db.collection("ques").doc("ques_non_tech" + this.quesNumber).get().then(data => {
+			firebaseApp.db.collection("ques").doc("ques_non_tech" + this.currentQuestion).get().then(data => {
+				// console.log(data.data());
 				var temp = Object.assign({}, data.data());
 				temp.id = data.id;
 				this.question = temp;
+        // console.log(this.qsolved)
+        let ded = this.qsolved.filter(e => e != data.id)
+        console.log(ded)
+        console.log(ded.length)
+        this.solved = false
+        if(ded.length == 0 && this.qsolved.length != 0) this.solved = true
 			});
+
 		}
-	},
+	}
 };
 </script>
-
-<style>
-</style>
