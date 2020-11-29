@@ -1,5 +1,5 @@
 # Tick-Tock⏳
-Ticktock was a time based competition with both tichnical and non-technical questions. This repository contains the code for the frontend of the webapp. This webapp was made with Vue.js,  Buefy (A Bulma based component library for Vue.js) and Firebase (For authentication and storing data).
+Ticktock was a time based competition with both technical and non-technical questions. This repository contains the code for the frontend of the webapp. This webapp was built with Vue.js,  Buefy (A Bulma based component library for Vue.js) and Firebase (For authentication and storing data).
 
 ### Setup enviroment variables (**IMPORTANT**)
 The env file contains the environment variables corresponding to the firebase config. (take a look at the firebase.js to get a better idea)
